@@ -22,7 +22,7 @@ If the file specified does not exist, it will be created.
 ## Usage
 
 
-> [!DANGER]
+> [!WARNING]
 > Please do note, if you specify the wrong file with the wrong format, it may not load properly or may break your file.
 
 
