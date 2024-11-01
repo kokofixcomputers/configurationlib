@@ -4,7 +4,7 @@ A simple configuration manager for Python that allows you to easily manage neste
 
 ## Features
 
-- Load and save configurations from/to a JSON file.
+- Load and save configurations from/to a JSON, YAML or .env file.
 - Create nested dictionaries dynamically.
 - Retrieve configuration values easily.
 
@@ -16,14 +16,22 @@ You can install the package via pip:
 pip install configurationlib
 ```
 
+## Note
+If the file specified does not exist, it will be created.
+
 ## Usage
+
+
+> [!NOTE]
+> Please do note, if you specify the wrong file with the wrong format, it may not load properly or may break your file.
+
 
 Here is a simple example of the usage of this module:
 ```python
 import configurationlib
 
 # Create an instance of the configuration manager
-config = configurationlib.Instance(file="config.json") # Choose any file name you like!
+config = configurationlib.Instance(file="config.json") # Choose any file name you like! The file will be created if it does not exist.
 
 # Use save() to get access to the current configuration and set values
 config.save()["dic1"] = {}  # Initialize a new dictionary
