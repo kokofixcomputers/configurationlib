@@ -36,8 +36,13 @@ class Instance:
         spec = importlib.util.spec_from_file_location("config", file)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        
-        return module.config if hasattr(module, 'config') else {}
+
+        config_vars = {}
+        for var in dir(module):
+            if not var.startswith('__') and var.isidentifier():
+                config_vars[var] = getattr(module, var)
+
+        return config_vars
     
     def load_ini(self, file):
         """Load configuration from an INI file."""
@@ -65,8 +70,8 @@ class Instance:
                 for key, value in self.config.items():
                     f.write(f"{key}={value}\n")
             elif self.format == 'PYTHON':
-                with open(self.file, 'w') as py_file:
-                    py_file.write("config = " + repr(self.config) + "\n")
+                for key, value in self.config.items():
+                    f.write(f"{key} = {repr(value)}\n")  # Write each key-value pair as a separate variable
             elif self.format == 'INI':
                 config = configparser.ConfigParser()
                 
