@@ -23,7 +23,7 @@ If the file specified does not exist, it will be created.
 
 
 > [!WARNING]
-> Please do note, if you specify the wrong file with the wrong format, it may not load properly or may break your file.
+> Please do note, if you specify the wrong file with the wrong format, it may load incorrectly or may break your file.
 
 
 Here is a simple example of the usage of this module:
@@ -37,6 +37,7 @@ config = configurationlib.Instance(file="config.json") # Choose any file name yo
 config.save()["dic1"] = {}  # Initialize a new dictionary
 config.save()["dic1"]["afewmoredic"] = {}  # Initialize a nested dictionary
 config.save()["dic1"]["afewmoredic"]["key"] = "value"  # Set a value
+config.save()['weird'] = True
 
 # Retrieve values from nested dictionaries using get()
 retrieved_value = config.get()["dic1"]["afewmoredic"]["key"] # Use config.get to retrieve the value
@@ -67,3 +68,11 @@ print(retrieved_value)  # Output: value
 config.save()
 ```
 The only line that changes is `config = configurationlib.Instance(file="config.json", format=configurationlib.Format.YAML` nothing else changes. It will automatically save the data into the data you'd like! If you remove format argument, it will default to `JSON`.
+
+### Hot Reloading
+> [!NOTE]
+> Hot reloading is disabled by default
+If you want to enable hot reloading, Use this:
+```python
+config = configurationlib.Instance(file="config.json", format=configurationlib.Format.YAML, hot_reloading=True)
+```
