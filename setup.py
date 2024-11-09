@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='configurationlib',
-    version='1.1.0',
+    version='1.2.0',
     author='kokodev',
     author_email='koko@kokodev.cc',
     description='A simple configuration manager',
@@ -11,6 +11,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'pyyaml',  # Specify PyYAML as a dependency
+        'toml',
+        'configparser'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
