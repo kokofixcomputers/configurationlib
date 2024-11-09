@@ -1,6 +1,7 @@
 import json
 import os
 import yaml  # Make sure to install PyYAML: pip install pyyaml
+import configparser  # For INI files
 
 class Instance:
     def __init__(self, file, format='JSON'):
@@ -20,16 +21,35 @@ class Instance:
                     self.config = yaml.safe_load(f)
                 elif self.format == 'ENV':
                     self.config = self.load_env(f)
+                elif self.format == 'PYTHON':
+                    self.config = self.load_python(self.file)
+                elif self.format == 'INI':
+                    self.config = self.load_ini(f)
                 else:
                     raise ValueError(f"Unsupported format: {self.format}")
         else:
             self.config = {}
 
+    def load_python(self, file):
+        """Load configuration from a Python script."""
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("config", file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        
+        return module.config if hasattr(module, 'config') else {}
+    
+    def load_ini(self, file):
+        """Load configuration from an INI file."""
+        config = configparser.ConfigParser()
+        config.read_file(file)
+        return {section: dict(config.items(section)) for section in config.sections()}
+
     def load_env(self, file):
         """Load configuration from an env file."""
         config = {}
         for line in file:
-            if line.strip() and not line.startswith('#'):  # Ignore empty lines and comments
+            if line.strip() and not line.startswith('#'):
                 key, value = line.strip().split('=', 1)
                 config[key] = value
         return config
@@ -44,15 +64,57 @@ class Instance:
             elif self.format == 'ENV':
                 for key, value in self.config.items():
                     f.write(f"{key}={value}\n")
+            elif self.format == 'PYTHON':
+                with open(self.file, 'w') as py_file:
+                    py_file.write("config = " + repr(self.config) + "\n")
+            elif self.format == 'INI':
+                config = configparser.ConfigParser()
+                
+                for section, values in self.config.items():
+                    config[section] = {}
+                    if isinstance(values, dict):
+                        for key, value in values.items():
+                            config[section][key] = str(value)  # Convert all values to string
+                    else:
+                        config[section][section] = str(values)
+
+                config.write(f)
             else:
                 raise ValueError(f"Unsupported format: {self.format}")
-        
-        return self.config  # Return the current config for further manipulation
+
+        return self.config  # Ensure it returns the current config for further manipulation
 
     def get(self):
         """Get the current configuration."""
         return self.config
 
+    def __setitem__(self, key, value):
+        """Allow setting values directly using dictionary-like syntax."""
+        
+        keys = key.split('.')
+        
+        current_level = self.config
+        
+        for k in keys[:-1]:
+            if k not in current_level or not isinstance(current_level[k], dict):
+                current_level[k] = {}
+            current_level = current_level[k]
+
+        current_level[keys[-1]] = value
+        
+        return self.save()  # Ensure it saves and returns updated config
+
+    def __getitem__(self, key):
+        """Allow getting values directly using dictionary-like syntax."""
+        
+        keys = key.split('.')
+        
+        current_level = self.config
+        
+        for k in keys:
+            current_level = current_level.get(k)  
+        
+        return current_level
 
 class Format:
     @staticmethod
@@ -66,3 +128,11 @@ class Format:
     @staticmethod
     def ENV():
         return "ENV"
+    
+    @staticmethod
+    def PYTHON():
+        return "PYTHON"
+    
+    @staticmethod
+    def INI():
+        return "INI"
