@@ -2,18 +2,43 @@ import json
 import os
 import yaml  # Make sure to install PyYAML: pip install pyyaml
 import configparser  # For INI files
+import toml
+import threading
+import time
 
 class Instance:
-    def __init__(self, file, format='JSON'):
+    def __init__(self, file, format='JSON', hot_reloading=False):
         self.file = file
         self.config = {}
         self.format_function = format()  # Normalize format to uppercase
         self.format = self.format_function.upper()
+        self.hot_reloading = hot_reloading
+        self.last_modified_time = 0  # Track the last modified time
         self.load()
+        
+        
+        if self.hot_reloading:
+            self.start_hot_reloading()
+        
+    def start_hot_reloading(self):
+        """Start a thread to monitor the configuration file for changes."""
+        def monitor():
+            while True:
+                time.sleep(1)  # Check every second
+                if os.path.exists(self.file):
+                    current_modified_time = os.path.getmtime(self.file)
+                    if current_modified_time != self.last_modified_time:
+                        print(f"Configuration file '{self.file}' changed. Reloading...")
+                        self.load()  # Reload the configuration
+                        self.last_modified_time = current_modified_time  # Update the last modified time
+
+        thread = threading.Thread(target=monitor, daemon=True)
+        thread.start()
 
     def load(self):
         """Load configuration from the specified file based on its format."""
         if os.path.exists(self.file):
+            self.last_modified_time = os.path.getmtime(self.file)  # Update last modified time
             with open(self.file, 'r') as f:
                 if self.format == 'JSON':
                     self.config = json.load(f)
@@ -25,6 +50,8 @@ class Instance:
                     self.config = self.load_python(self.file)
                 elif self.format == 'INI':
                     self.config = self.load_ini(f)
+                elif self.format == 'TOML':
+                    self.config = self.load_toml(f)
                 else:
                     raise ValueError(f"Unsupported format: {self.format}")
         else:
@@ -58,6 +85,14 @@ class Instance:
                 key, value = line.strip().split('=', 1)
                 config[key] = value
         return config
+    def load_toml(self, file):
+        """Load configuration from a TOML file."""
+        return toml.load(file)
+
+    def save_toml(self):
+        """Save the current configuration to a TOML file."""
+        with open(self.file, 'w') as f:
+            toml.dump(self.config, f)
 
     def save(self):
         """Save the current configuration to the specified file based on its format."""
@@ -84,6 +119,8 @@ class Instance:
                         config[section][section] = str(values)
 
                 config.write(f)
+            elif self.format == 'TOML':
+                self.save_toml()
             else:
                 raise ValueError(f"Unsupported format: {self.format}")
 
@@ -141,3 +178,7 @@ class Format:
     @staticmethod
     def INI():
         return "INI"
+    
+    @staticmethod
+    def TOML():
+        return "TOML"
