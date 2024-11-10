@@ -1,5 +1,6 @@
 # configured/__init__.py
 
-from .configurationlib import Instance
+from .configurationlib import Instance, Format
 
-__all__ = ['Instance']
+# Use this to include everything
+__all__ = [name for name in dir() if not name.startswith('_')]
