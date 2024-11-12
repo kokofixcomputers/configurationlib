@@ -7,18 +7,23 @@ import threading
 import time
 
 class Instance:
-    def __init__(self, file, format='JSON', hot_reloading=False):
+    def __init__(self, file, format='JSON', hot_reloading=False, debug=False):
         self.file = file
         self.config = {}
         self.format_function = format()  # Normalize format to uppercase
         self.format = self.format_function.upper()
         self.hot_reloading = hot_reloading
         self.last_modified_time = 0  # Track the last modified time
+        self.debug = debug
         self.load()
         
         
         if self.hot_reloading:
             self.start_hot_reloading()
+
+    def log(self, msg):
+        if self.debug == True:
+            print(msg)
         
     def start_hot_reloading(self):
         """Start a thread to monitor the configuration file for changes."""
@@ -28,7 +33,7 @@ class Instance:
                 if os.path.exists(self.file):
                     current_modified_time = os.path.getmtime(self.file)
                     if current_modified_time != self.last_modified_time:
-                        print(f"Configuration file '{self.file}' changed. Reloading...")
+                        log(f"Configuration file '{self.file}' changed. Reloading...")
                         self.load()  # Reload the configuration
                         self.last_modified_time = current_modified_time  # Update the last modified time
 

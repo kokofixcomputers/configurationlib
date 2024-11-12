@@ -72,7 +72,9 @@ The only line that changes is `config = configurationlib.Instance(file="config.j
 ### Hot Reloading
 > [!NOTE]
 > Hot reloading is disabled by default
+
 If you want to enable hot reloading, Use this:
 ```python
 config = configurationlib.Instance(file="config.json", format=configurationlib.Format.YAML, hot_reloading=True)
 ```
+Hot reloading will check the file for changes and update the variable.
