@@ -1,4 +1,5 @@
 # Configurationlib
+[![Python Tests](https://github.com/kokofixcomputers/configurationlib/actions/workflows/python-tests.yaml/badge.svg)](https://github.com/kokofixcomputers/configurationlib/actions/workflows/python-tests.yaml)
 
 A simple configuration manager for Python that allows you to easily manage nested configurations using JSON files.
 
