@@ -23,14 +23,14 @@ def config_file(request, temp_dir):
         config_file.write(json.dumps(content))
     elif format_func == Format.YAML:
         config_file.write(yaml.dump(content))
-    elif format_func == Format.ENV:
-        config_file.write("\n".join([f"{k.upper()}={v}" for k, v in content.items() if not isinstance(v, (dict, list))]))
-    elif format_func == Format.INI:
-        config = configparser.ConfigParser()
-        config['DEFAULT'] = {'key': 'value', 'bool': 'true'}
-        config['nested'] = {'inner': 'nested_value'}
-        with config_file.open('w') as f:
-            config.write(f)
+    #elif format_func == Format.ENV:
+    #    config_file.write("\n".join([f"{k.upper()}={v}" for k, v in content.items() if not isinstance(v, (dict, list))]))
+    #elif format_func == Format.INI:
+    #    config = configparser.ConfigParser()
+    #    config['DEFAULT'] = {'key': 'value', 'bool': 'true'}
+    #    config['nested'] = {'inner': 'nested_value'}
+    #    with config_file.open('w') as f:
+    #        config.write(f)
     elif format_func == Format.TOML:
         config_file.write(toml.dumps(content))
     
@@ -94,12 +94,12 @@ def test_hot_reloading(config_file):
             json.dump({"hot_reload": "success"}, f)
         elif format_func == Format.YAML:
             yaml.dump({"hot_reload": "success"}, f)
-        elif format_func == Format.ENV:
-            f.write("HOT_RELOAD=success")
-        elif format_func == Format.INI:
-            ini_config = configparser.ConfigParser()
-            ini_config['DEFAULT'] = {'hot_reload': 'success'}
-            ini_config.write(f)
+        #elif format_func == Format.ENV:
+        #    f.write("HOT_RELOAD=success")
+        #elif format_func == Format.INI:
+        #    ini_config = configparser.ConfigParser()
+        #    ini_config['DEFAULT'] = {'hot_reload': 'success'}
+        #    ini_config.write(f)
         elif format_func == Format.TOML:
             toml.dump({"hot_reload": "success"}, f)
     

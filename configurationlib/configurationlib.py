@@ -188,7 +188,8 @@ class Format:
 
     @staticmethod
     def ENV():
-        return "ENV"
+        print("WARNING! ENV FORMAT HAS BEEN DEPRECEATED. BUGS AND ERRORS MAY OCCUR. DO NOT USE IN PRODUCTION!!!")
+        return "ENV" #DEPRECEATED
 
     @staticmethod
     def PYTHON():
@@ -196,6 +197,7 @@ class Format:
 
     @staticmethod
     def INI():
+        print("DEPRECEATION WARNING! INI FORMAT IS NOT BEING MAINTAINED ANYMORE. BUGS AND ERRORS MAY OCCUR. CONSIDER SWITCHING TO YAML FOR USER EDDITIBILITY. DO NOT USE IN PRODUCTION!!!")
         return "INI"
 
     @staticmethod
