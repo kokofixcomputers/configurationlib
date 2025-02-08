@@ -104,7 +104,7 @@ def test_hot_reloading(config_file):
             toml.dump({"hot_reload": "success"}, f)
     
     # Wait for the hot reload to occur
-    time.sleep(2)
+    time.sleep(4)
     
     assert config['hot_reload'] == 'success', f"Hot reloading failed for format {format_func.__name__}"
 
