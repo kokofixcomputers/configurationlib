@@ -144,9 +144,28 @@ class Instance:
             self.config
         )  # Ensure it returns the current config for further manipulation
 
-    def get(self):
-        """Get the current configuration."""
-        return self.config
+    def get(self, *keys):
+        """
+        Get the current configuration.
+
+        Supports:
+        - get()  : Returns the entire configuration dictionary.
+        - get('key') : Returns the value associated with 'key'.
+        - get('key1', 'key2') : Returns the value associated with nested keys 'key1' and 'key2'.
+        - get().get('key1').get('key2') : Chained get() calls for nested keys.
+        - get()['key1'] : Dictionary-style access after get().
+        """
+        if not keys:
+            return self.config  # Return the entire config dictionary
+
+        value = self.config
+        for key in keys:
+            if isinstance(value, dict) and key in value:
+                value = value[key]
+            else:
+                return None  # Key not found
+
+        return value  # Return the final value
 
     def __setitem__(self, key, value):
         """Allow setting values directly using dictionary-like syntax."""
@@ -188,8 +207,7 @@ class Format:
 
     @staticmethod
     def ENV():
-        print("WARNING! ENV FORMAT HAS BEEN DEPRECEATED. BUGS AND ERRORS MAY OCCUR. DO NOT USE IN PRODUCTION!!!")
-        return "ENV" #DEPRECEATED
+        return "ENV"
 
     @staticmethod
     def PYTHON():
@@ -198,7 +216,7 @@ class Format:
     @staticmethod
     def INI():
         print("DEPRECEATION WARNING! INI FORMAT IS NOT BEING MAINTAINED ANYMORE. BUGS AND ERRORS MAY OCCUR. CONSIDER SWITCHING TO YAML FOR USER EDDITIBILITY. DO NOT USE IN PRODUCTION!!!")
-        return "INI"
+        return "INI" # DEPRECEATED
 
     @staticmethod
     def TOML():
