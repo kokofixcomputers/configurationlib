@@ -34,7 +34,7 @@ class Instance:
                 if os.path.exists(self.file):
                     current_modified_time = os.path.getmtime(self.file)
                     if current_modified_time != self.last_modified_time:
-                        log(f"Configuration file '{self.file}' changed. Reloading...")
+                        self.log(f"Configuration file '{self.file}' changed. Reloading...")
                         self.load()  # Reload the configuration
                         self.last_modified_time = (
                             current_modified_time  # Update the last modified time
