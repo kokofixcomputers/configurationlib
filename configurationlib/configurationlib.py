@@ -12,7 +12,7 @@ class Instance:
         self.file = file
         self.config = {}
         self.formatfunc = format()
-        self.format = formatfunc.upper()  # Normalize format to uppercase
+        self.format = self.formatfunc.upper()  # Normalize format to uppercase
         self.hot_reloading = hot_reloading
         self.last_modified_time = 0  # Track the last modified time
         self.debug = debug
