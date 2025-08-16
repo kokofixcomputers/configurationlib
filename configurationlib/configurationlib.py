@@ -11,7 +11,7 @@ class Instance:
     def __init__(self, file, format="JSON", hot_reloading=False, debug=False):
         self.file = file
         self.config = {}
-        self.format = format.upper()  # Normalize format to uppercase
+        self.format = str(format).upper()  # Normalize format to uppercase
         self.hot_reloading = hot_reloading
         self.last_modified_time = 0  # Track the last modified time
         self.debug = debug
